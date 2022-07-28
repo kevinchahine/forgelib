@@ -88,9 +88,6 @@ namespace forge
 
 		friend std::ostream& operator<<(std::ostream& os, const BitBoard& bb);
 
-		// TODO: REMOVE
-		//guten::core::Matrix toMat() const;
-
 		void print(std::ostream& os = std::cout) const;
 
 	private:

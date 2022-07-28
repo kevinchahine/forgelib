@@ -348,14 +348,10 @@ namespace forge
 
 	template<> void Position::move<pieces::Pawn>(Move move)
 	{
-		cout << "move counter: " << m_moveCounter.count << " to ";
-		
 		if (m_board.isWhite(move.from()))
 			this->move<pieces::WhitePawn>(move);
 		else
 			this->move<pieces::BlackPawn>(move);
-
-		cout << m_moveCounter.count << endl;
 	}
 
 	template<> void Position::move<pieces::Piece>(Move move)

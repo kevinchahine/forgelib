@@ -25,7 +25,7 @@ namespace forge
 ///	{
 ///		// 0.) --- Determine which player is moving before making a move ---
 ///		// We need to make sure that their king is not attacked after making the move.
-///		const bool isWhiteKing = currPos.moveCounter().isWhitesTurn();	
+///		const bool isWhiteKing = currPos.moveCounter().is_whites_turn();	
 ///
 ///		// 1.) --- Copy move and position to back of container ---
 ///		this->emplace_back(move, currPos);
@@ -110,7 +110,7 @@ namespace forge
 ///	void MoveList::pushIfLegalRookMove(const Position & currPos, Move move)
 ///	{
 ///		// 0.) --- Determine which player is moving before making a move ---
-///		const bool isWhiteKing = currPos.moveCounter().isWhitesTurn();
+///		const bool isWhiteKing = currPos.moveCounter().is_whites_turn();
 ///
 ///		// 1.) --- Copy move and position to back of container ---
 ///		this->emplace_back(move, currPos);

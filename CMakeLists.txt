@@ -36,6 +36,10 @@ set(CORE
 	forge/core/Direction.h
 	forge/core/FiftyMoveRule.cpp
 	forge/core/FiftyMoveRule.h
+	forge/core/game_history.cpp
+	forge/core/game_history.h
+	forge/core/GameState.cpp
+	forge/core/GameState.h
 	forge/core/HashCombine.h
 	forge/core/IntBoard.cpp
 	forge/core/IntBoard.h	
@@ -45,6 +49,8 @@ set(CORE
 	forge/core/MovePositionPair.cpp
 	forge/core/MovePositionPair.h
 	forge/core/Movers.h
+	forge/core/Node.cpp
+	forge/core/Node.h
 	forge/core/Piece.cpp
 	forge/core/Piece.h
 	forge/core/Position.cpp
@@ -56,17 +62,28 @@ set(CORE
 	forge/core/MoveList.h	
 )
 
+set(TIME
+	forge/time/clock.cpp
+	forge/time/clock.h
+	forge/time/stopwatch.cpp
+	forge/time/stopwatch.h
+	forge/time/timer.cpp
+	forge/time/timer.h
+)
+
 # --- Make this a library (not an app) ---
 
 add_library(${LIBRARY_NAME} STATIC
 	${FEATURE_EXTRACTOR}	
 	${CORE}
+	${TIME}
 )
 
 # --- Create Folders for VS ---
 
 source_group(feature_extractor FILES ${FEATURE_EXTRACTOR})
 source_group(core FILES ${CORE})
+source_group(time FILES ${TIME})
 
 include_directories(.)
 
