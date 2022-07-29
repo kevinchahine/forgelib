@@ -95,32 +95,10 @@ namespace forge
 
 ostream & operator<<(ostream & os, const forge::clock & clock)
 {
-	chrono::nanoseconds btime = clock.get_black_timer().expires_from_now();
-	chrono::minutes bTimeMin = chrono::duration_cast<chrono::minutes>(btime);
-	chrono::seconds bTimeSec = chrono::duration_cast<chrono::seconds>(btime - bTimeMin);
-
-	chrono::nanoseconds wtime = clock.get_white_timer().expires_from_now();
-	chrono::minutes wTimeMin = chrono::duration_cast<chrono::minutes>(wtime);
-	chrono::seconds wTimeSec = chrono::duration_cast<chrono::seconds>(wtime - wTimeMin);
-	
 	stringstream bss;
 	stringstream wss;
 
-	os << "Black: ";
-
-	bss << bTimeMin.count() << ":";
-	if (bTimeSec.count() < 10)	bss << '0';
-	bss << bTimeSec.count();
-	
-	os << setw(5) << bss.str();
-
-	os << "      White: ";
-
-	wss << wTimeMin.count() << ":";
-	if (wTimeSec.count() < 10) wss << '0';
-	wss << wTimeSec.count();
-
-	os << setw(5) << wss.str();
+	os << "Black: " << clock.get_black_timer() << '\t' << " White: " << clock.get_white_timer() << endl;
 
 	return os;
 }

@@ -28,6 +28,20 @@ namespace forge
 
 		void add_time(const std::chrono::nanoseconds & duration);
 
+		friend std::ostream& operator<<(std::ostream& os, const Timer& timer) 
+		{
+			using namespace std;
+
+			auto expiry = timer.expires_from_now(); 
+
+			auto mins = chrono::duration_cast<chrono::minutes>(expiry);
+
+			auto secs = chrono::duration_cast<chrono::seconds>(expiry - mins);
+
+			os << mins.count() << ":" << secs.count();
+
+			return os;
+		}
 	protected:
 
 		// Time at which the timer was last resumed

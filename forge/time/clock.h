@@ -68,10 +68,11 @@ namespace forge
 		const Timer & get_white_timer() const { return whites_timer; }
 		const Timer & get_black_timer() const { return blacks_timer; }
 
+		const std::chrono::milliseconds& get_whites_increment() { return whites_increment; }
+		const std::chrono::milliseconds& get_blacks_increment() { return whites_increment; }
+
 		bool is_whites_turn() const;
 		bool is_blacks_turn() const;
-
-		int get_move_number() const;
 
 		// TODO: implement this method
 		//void onTimeout(std::function<void()> && timoutEvent);
