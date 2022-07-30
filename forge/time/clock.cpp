@@ -9,15 +9,6 @@ using namespace std;
 
 namespace forge
 {
-	///void clock::start()
-	///{
-	///	whites_timer.resume();
-	///
-	///	blacks_timer.pause();
-	///
-	///	curr_state = STATE::START;
-	///}
-
 	void clock::stop()
 	{
 		whites_timer.pause();
