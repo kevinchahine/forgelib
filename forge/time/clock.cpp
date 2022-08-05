@@ -9,7 +9,7 @@ using namespace std;
 
 namespace forge
 {
-	void clock::stop()
+	void Clock::stop()
 	{
 		whites_timer.pause();
 
@@ -18,7 +18,7 @@ namespace forge
 		curr_state = STATE::STOP;
 	}
 
-	void clock::resume()
+	void Clock::resume()
 	{
 		if (is_whites_turn()) {
 			whites_timer.resume();
@@ -30,13 +30,13 @@ namespace forge
 		curr_state = STATE::START;
 	}
 	
-	void clock::reset_all()
+	void Clock::resetAll()
 	{
 		// Reassign all fields with default values
-		(*this) = clock{};
+		(*this) = Clock{};
 	}
 	
-	void clock::synchronize(
+	void Clock::synchronize(
 		std::chrono::high_resolution_clock::duration whites_time,
 		std::chrono::high_resolution_clock::duration white_inc,
 		std::chrono::high_resolution_clock::duration blacks_time,
@@ -48,7 +48,7 @@ namespace forge
 		this->blacks_increment = chrono::duration_cast<chrono::milliseconds>(black_inc);
 	}
 	
-	void forge::clock::click()
+	void forge::Clock::click()
 	{
 		curr_state = STATE::START;
 
@@ -73,18 +73,18 @@ namespace forge
 		}
 	}
 
-	bool clock::is_whites_turn() const
+	bool Clock::is_whites_turn() const
 	{
 		return whites_timer.is_resumed();
 	}
 	
-	bool clock::is_blacks_turn() const
+	bool Clock::is_blacks_turn() const
 	{
 		return !is_whites_turn();
 	}
 } // namespace forge
 
-ostream & operator<<(ostream & os, const forge::clock & clock)
+ostream & operator<<(ostream & os, const forge::Clock & clock)
 {
 	stringstream bss;
 	stringstream wss;

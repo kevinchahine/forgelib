@@ -40,7 +40,7 @@ namespace forge
 
 	TODO: Add presets like "blitz0", "blitz1", "rapid0", etc
 	*/
-	class clock
+	class Clock
 	{
 	public:
 		// Stop or pauses timers. Timers will resume apon calling click();
@@ -49,8 +49,8 @@ namespace forge
 		void resume();
 
 		// Sets allToFen time controls and move count to zero.
-		// Sets state to stop. Good to call synchronize after reset_all().
-		void reset_all();
+		// Sets state to stop. Good to call synchronize after resetAll().
+		void resetAll();
 
 		// Used to set each time control or syncronize with a UCI GUI.
 		// Does not start or stop the timer.
@@ -61,8 +61,8 @@ namespace forge
 			std::chrono::high_resolution_clock::duration blackInc);
 
 		// Pauses current players timer, and resumes next players timer.
-		// 1st click after reset_all() or construction will make white's timer tick.
-		// 2nd click after reset_all() or construction will make white's timer pause and black's timer tick.
+		// 1st click after resetAll() or construction will make white's timer tick.
+		// 2nd click after resetAll() or construction will make white's timer pause and black's timer tick.
 		void click();
 
 		const Timer & get_white_timer() const { return whites_timer; }
@@ -93,4 +93,4 @@ namespace forge
 	};
 } // namespace forge
 
-std::ostream & operator<<(std::ostream & os, const forge::clock & clock);
+std::ostream & operator<<(std::ostream & os, const forge::Clock & clock);
