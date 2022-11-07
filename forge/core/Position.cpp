@@ -354,6 +354,11 @@ namespace forge
 			this->move<pieces::BlackPawn>(move);
 	}
 
+	// Moves any piece on the board.
+	// Works for captures and push moves as well.
+	// For support for castling, see Position::move<pieces::King>()
+	// For support for en passent, see Position::move<pieces::Pawn>();
+	// For support for promotions, see Position::move<pieces::Pawn>();
 	template<> void Position::move<pieces::Piece>(Move move)
 	{
 		pieces::Piece p = m_board.at(move.from());
