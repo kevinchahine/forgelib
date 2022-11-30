@@ -99,7 +99,7 @@ namespace forge
 		// Set from the pruneChildren() method
 		enum class STATE : uint8_t {
 			FRESH,		// Node has been created but hasn't been expanded yet (children have not been generated)
-			EXPANDED,	// Node has been expanded so it may have children (children have been generated)
+			EXPANDED,	// Node has been expanded so it has 0 or more children (children have been generated)
 			PRUNED,		// Node has been fully searched and its children pruned (no need to search this node anymore)
 		} m_state = STATE::FRESH;
 	};	// class NodeTemplate<NODE_T>
