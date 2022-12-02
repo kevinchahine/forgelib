@@ -50,9 +50,9 @@ namespace forge
 		bool blackWins() const { return state == STATE::WIN && player == PLAYER::BLACK; }
 		bool isDraw() const { return state == STATE::DRAW; }
 
-		int getValue() const {
-			if (whiteWins()) return 1;
-			if (blackWins()) return -1;
+		int getValue(bool maximizeWhite) const {
+			if (whiteWins()) return (maximizeWhite ? 1 : -1);
+			if (blackWins()) return (maximizeWhite ? -1 : 1);
 			else return 0;	// counts for draws and continues
 		}
 

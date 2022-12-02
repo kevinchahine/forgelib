@@ -53,12 +53,15 @@ namespace forge
 		// It has no parent node.
 		bool isRoot() const { return m_parentPtr == nullptr; }
 
-		// Leaf nodes are node that do not have children yet. 
+		// Leaf nodes are nodes that do not have children yet. 
+		// 
 		// After being expanded, leaf nodes become:
 		//	- intermediate nodes if they end up with children.
 		//	- terminal ndoes if they do not.
-		// Basically a leaf node is any node that hasn't been expanded.
-		// A leaf node is not to be confused with a terminal node. 
+		// 
+		// A leaf node is any node that hasn't been expanded.
+		// A leaf node is never a terminal node but it can become one after calling expand().
+		// A leaf node is never an intermediate node but it can become one after calling expand(). 
 		bool isLeaf() const { return m_state == STATE::FRESH; /* implies: children().empty(); */ }
 
 		// Intermediate nodes are any nodes that have children.
