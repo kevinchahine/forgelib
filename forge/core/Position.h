@@ -95,7 +95,7 @@ namespace forge
 		bool operator==(const Position & rhs) const
 		{
 			return
-				(m_moveCounter.isWhitesTurn() == rhs.m_moveCounter.isWhitesTurn()) &&
+				//(m_moveCounter.isWhitesTurn() == rhs.m_moveCounter.isWhitesTurn()) &&
 				(m_board == rhs.m_board);
 		}
 		bool operator!=(const Position & rhs) const { return !(*this == rhs); }

@@ -170,14 +170,19 @@ namespace forge
 		while (nPtr != nullptr) {
 			if (nPtr->position() == currPos) {
 				matches++;
-
+				cout << "draw found " << (int) matches << ' ';
 				if (matches >= 3) {
+					cout << "draw by repetition:" << endl;
 					return true;	// 3 matches found (DRAW by repetition)
 				}
 			}
 
 			// Jump to parent of this node.
 			nPtr = nPtr->parentPtr();
+		}
+
+		if (matches > 0) {
+			cout << "no draw" << endl;
 		}
 
 		return false;	// did not find 3 matches (No DRAW)
