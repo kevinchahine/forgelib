@@ -167,7 +167,7 @@ namespace forge
 	template<class NODE_T>
 	void NodeTemplate<NODE_T>::prune()
 	{
-		m_childrenPtrs.clear();
+		/////m_childrenPtrs.clear(); // MIGHT NOT BE SAFE FOR MULTITHREADING
 
 		m_state = STATE::PRUNED;
 	}
