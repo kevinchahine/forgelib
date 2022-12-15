@@ -3,6 +3,8 @@
 #include <forge/core/MovePositionPair.h>
 
 #include <vector>
+#include <string>
+#include <sstream>
 
 namespace forge
 {
@@ -26,6 +28,34 @@ namespace forge
 			pos.move<pieces::Piece>(move);
 
 			this->emplace_back(move, pos);
+		}
+
+		void save(const std::string& filename);
+		void load(const std::string& filename);
+
+		friend std::ostream& operator<<(std::ostream& os, const game_history& history) {
+			for (const MovePositionPair& pair : history) {
+				os << pair << std::endl;
+			}
+
+			return os;
+		}
+
+		friend std::istream& operator>>(std::istream& is, game_history& history) {
+			std::string line = " ";
+
+			while (true) {
+				std::getline(is, line);
+
+				if (line.empty())
+					break;
+
+				std::istringstream iss(line);
+
+				iss >> history.emplace_back();
+			}
+
+			return is;
 		}
 
 		void toPGN() const;

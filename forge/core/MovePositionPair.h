@@ -29,6 +29,20 @@ namespace forge
 			return os;
 		}
 
+		friend std::istream& operator>>(std::istream& is, MovePositionPair& pair) {
+			std::string str;
+
+			is >> str;
+			
+			pair.move = Move(str);
+
+			std::getline(is, str);
+
+			pair.position.fromFEN(str);
+
+			return is;
+		}
+
 	public:
 		Move move;
 		Position position;
