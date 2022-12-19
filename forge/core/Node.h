@@ -35,15 +35,15 @@ namespace forge
 
 		// Generates children nodes using the move generator.
 		void expand();
-		
+
 		// Deletes children nodes to save memory.
 		void prune();
 
-		Move & move() { return m_move; }
-		const Move & move() const { return m_move; }
+		Move& move() { return m_move; }
+		const Move& move() const { return m_move; }
 
-		Position & position() { return m_position; }
-		const Position & position() const { return m_position; }
+		Position& position() { return m_position; }
+		const Position& position() const { return m_position; }
 
 		bool isFresh() const { return m_state == STATE::FRESH; }
 		bool isExpanded() const { return m_state == STATE::EXPANDED; }
@@ -52,6 +52,8 @@ namespace forge
 		// Root node is the top node of the tree.
 		// It has no parent node.
 		bool isRoot() const { return m_parentPtr == nullptr; }
+
+		bool hasParent() const { return m_parentPtr != nullptr; }
 
 		// Leaf nodes are nodes that do not have children yet. 
 		// 
@@ -78,8 +80,8 @@ namespace forge
 		NODE_T* parentPtr() { return m_parentPtr; }
 		const NODE_T* parentPtr() const { return m_parentPtr; }
 
-		std::vector<std::shared_ptr<NODE_T>> & children() { return m_childrenPtrs; }
-		const std::vector<std::shared_ptr<NODE_T>> & children() const { return m_childrenPtrs; }
+		std::vector<std::shared_ptr<NODE_T>>& children() { return m_childrenPtrs; }
+		const std::vector<std::shared_ptr<NODE_T>>& children() const { return m_childrenPtrs; }
 
 	protected:
 
@@ -89,18 +91,19 @@ namespace forge
 
 		// Stores a position of the game
 		Position m_position;
-			
+
 		// Address of parent node
 		// if nullptr then this object is the root of the tree
 		// Do not deallocate
 		NODE_T* m_parentPtr = nullptr;
-		
+
 		// Addresses of children nodes
 		std::vector<std::shared_ptr<NODE_T>> m_childrenPtrs;
-		
+
 		// Set to PRUNED when all children have been fully searched and pruned.
 		// Set from the pruneChildren() method
-		enum class STATE : uint8_t {
+		enum class STATE : uint8_t
+		{
 			FRESH,		// Node has been created but hasn't been expanded yet (children have not been generated)
 			EXPANDED,	// Node has been expanded so it has 0 or more children (children have been generated)
 			PRUNED,		// Node has been fully searched and its children pruned (no need to search this node anymore)
@@ -108,8 +111,7 @@ namespace forge
 	};	// class NodeTemplate<NODE_T>
 
 	template<class NODE_T>
-	void NodeTemplate<NODE_T>::reset()
-	{
+	void NodeTemplate<NODE_T>::reset() {
 		// TODO: Code: If this method can be re-written to assign
 		// a default object, then the derived classes would not need to 
 		// implement their own reset() methods.
@@ -120,8 +122,7 @@ namespace forge
 	}
 
 	template<class NODE_T>
-	void NodeTemplate<NODE_T>::expand()
-	{
+	void NodeTemplate<NODE_T>::expand() {
 		MoveList moves;
 
 		// 1.) --- Generate legal moves ---
@@ -131,27 +132,25 @@ namespace forge
 
 		// 2.) --- Create children nodes ---
 		m_childrenPtrs.clear();
-		m_childrenPtrs.reserve(moves.size());
+		m_childrenPtrs.resize(moves.size());
 
-		for (const auto& move : moves) {
-			auto sp = std::make_shared<NODE_T>();
-
+		for (size_t m = 0; m < moves.size(); ++m) {
+			const auto& move = moves.at(m);
+			auto& child = m_childrenPtrs.at(m);
+			
 			// -- Create new Node --
-			m_childrenPtrs.emplace_back(std::make_shared<NODE_T>());
-
-			// -- Alias --
-			NODE_T& child = *m_childrenPtrs.back();
+			child = std::make_shared<NODE_T>();
 
 			// -- Assign proper values --
-			child.m_move = move.move;
-			child.m_position = move.position;	// TODO: Optimize: Slow copy
+			child->m_move = move.move;
+			child->m_position = move.position;	// TODO: Optimize: Slow copy
 		}
 
 		// 3.) --- Assign sibling pointers ---
 		if (m_childrenPtrs.size()) {
 			for (size_t i = 0; i < m_childrenPtrs.size() - 1; i++) {
 				std::shared_ptr<NODE_T>& childPtr = m_childrenPtrs.at(i);
-				
+
 				childPtr->m_parentPtr = static_cast<NODE_T*>(this);
 			}
 		}
@@ -165,8 +164,7 @@ namespace forge
 	}
 
 	template<class NODE_T>
-	void NodeTemplate<NODE_T>::prune()
-	{
+	void NodeTemplate<NODE_T>::prune() {
 		/////m_childrenPtrs.clear(); // MIGHT NOT BE SAFE FOR MULTITHREADING
 
 		m_state = STATE::PRUNED;
