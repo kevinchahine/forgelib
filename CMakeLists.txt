@@ -95,6 +95,10 @@ set_property(TARGET ${LIBRARY_NAME} PROPERTY CXX_STANDARD 17)
 set_target_properties(${LIBRARY_NAME} PROPERTIES CXX_STANDARD 17)
 target_compile_features(${LIBRARY_NAME} PRIVATE cxx_std_17)
 
+if(MSVC)
+	target_compile_options(${PROJECT_NAME} PRIVATE "/MP")	# parallel compilation
+endif()
+
 # --- Set Preprocessor Macros ---
 add_compile_definitions(NOMINMAX)	# same as '#define NOMINMAX'
 
