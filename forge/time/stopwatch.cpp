@@ -5,15 +5,13 @@ using namespace std::chrono;
 
 namespace forge
 {
-	void StopWatch::reset(std::chrono::nanoseconds elapsedTime)
-	{
+	void StopWatch::reset(std::chrono::nanoseconds elapsedTime) {
 		m_elapsed = elapsedTime;
 
 		state = STATE::PAUSED;
 	}
 
-	void StopWatch::pause()
-	{
+	void StopWatch::pause() {
 		if (state == STATE::RESUMED) {
 			m_elapsed += (high_resolution_clock::now() - lastResumed);
 
@@ -21,8 +19,7 @@ namespace forge
 		}
 	}
 
-	void StopWatch::resume()
-	{
+	void StopWatch::resume() {
 		if (state == STATE::PAUSED) {
 			lastResumed = high_resolution_clock::now();
 
@@ -30,26 +27,24 @@ namespace forge
 		}
 	}
 
-	std::chrono::nanoseconds StopWatch::elapsed() const
-	{
-		switch (state)
-		{
+	std::chrono::nanoseconds StopWatch::elapsed() const {
+		switch (state) {
 		case STATE::PAUSED:			return m_elapsed;
 		case STATE::RESUMED:		return m_elapsed + (chrono::high_resolution_clock::now() - lastResumed);
+		default:return std::chrono::nanoseconds::max();// error
 		}
 	}
 
-	std::ostream & operator<<(std::ostream & os, const StopWatch & sw)
-	{
+	std::ostream & operator<<(std::ostream & os, const StopWatch & sw) {
 		nanoseconds elapsed = sw.elapsed();
 		minutes min = duration_cast<minutes>(elapsed);
 		seconds sec = duration_cast<seconds>(elapsed) - min;
 
 		os << min.count() << ':';
-		
+
 		if (sec.count() < 10)
 			os << '0';
-		
+
 		os << sec.count();
 
 		return os;
