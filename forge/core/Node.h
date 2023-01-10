@@ -112,12 +112,6 @@ namespace forge
 
 	template<class NODE_T>
 	void NodeTemplate<NODE_T>::reset() {
-		// TODO: Code: If this method can be re-written to assign
-		// a default object, then the derived classes would not need to 
-		// implement their own reset() methods.
-		// ex: (*this) = NodeTemplate<NODE_T>(); 
-		// Should do the trick
-
 		(*this) = NodeTemplate<NODE_T>{};	// default constructor
 	}
 
