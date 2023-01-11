@@ -85,8 +85,8 @@ namespace forge
 			std::size_t seed = 0;
 
 			hash_combine(seed, this->board());
-			hash_combine(seed, this->m_fiftyMoveRule);
-			hash_combine(seed, this->m_moveCounter);
+			//hash_combine(seed, this->m_fiftyMoveRule);
+			hash_combine(seed, this->m_moveCounter.isWhitesTurn());
 
 			return seed;
 		}

@@ -47,8 +47,7 @@ namespace forge
 
 		bool isFresh() const { return m_state == STATE::FRESH; }
 		bool isExpanded() const { return m_state == STATE::EXPANDED; }
-		bool isPruned() const { return m_state == STATE::PRUNED; }
-
+		
 		// Root node is the top node of the tree.
 		// It has no parent node.
 		bool isRoot() const { return m_parentPtr == nullptr; }
@@ -106,7 +105,7 @@ namespace forge
 		{
 			FRESH,		// Node has been created but hasn't been expanded yet (children have not been generated)
 			EXPANDED,	// Node has been expanded so it has 0 or more children (children have been generated)
-			PRUNED,		// Node has been fully searched and its children pruned (no need to search this node anymore)
+			///PRUNED,		// Node has been fully searched and its children pruned (no need to search this node anymore)
 		} m_state = STATE::FRESH;
 	};	// class NodeTemplate<NODE_T>
 
@@ -155,13 +154,6 @@ namespace forge
 		}
 
 		m_state = STATE::EXPANDED;
-	}
-
-	template<class NODE_T>
-	void NodeTemplate<NODE_T>::prune() {
-		/////m_childrenPtrs.clear(); // MIGHT NOT BE SAFE FOR MULTITHREADING
-
-		m_state = STATE::PRUNED;
 	}
 } // namespace forge
 

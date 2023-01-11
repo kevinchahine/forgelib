@@ -38,11 +38,13 @@ namespace forge
 	public:
 		void reset() { (*this) = GameState(); }
 
+		// TODO: Optimize: make an overload of init() which accepts the number of legal moves at that node to save on running movegen.
+		
 		// Calculates and sets game state
 		template<class NODE_T>
-		void operator()(const NodeTemplate<NODE_T>& node);
-		void operator()(const game_history& history);
-		//void operator()(const ChessMatch & match);	// TODO:
+		void init(const NodeTemplate<NODE_T>& node, const game_history & history = game_history());
+		void init(const game_history& history);
+		//void init(const ChessMatch & match);	// TODO:
 
 		bool isGameOver() const { return state != STATE::CONTINUE; }
 		bool isGameOn() const { return state == STATE::CONTINUE; }
@@ -109,6 +111,11 @@ namespace forge
 
 		static bool isInsufficientMaterial(const Board& board);
 
+		template<class NODE_T>
+		static int16_t countMatches(const NodeTemplate<NODE_T> & node);
+
+		static int16_t countMatches(const game_history & history);
+
 	public:
 		enum class PLAYER : bool {
 			WHITE, BLACK
@@ -134,7 +141,7 @@ namespace forge
 	};
 
 	template<class NODE_T>
-	void GameState::operator()(const NodeTemplate<NODE_T>& node)
+	void GameState::init(const NodeTemplate<NODE_T>& node, const game_history & history)
 	{
 //#ifdef _DEBUG
 //		if (node.isExpanded() == false) {
@@ -147,7 +154,11 @@ namespace forge
 		MoveList moves = gen.generate(node.position());
 		
 		std::function<bool()> drawByRepetition = [&]() {
-			return GameState::isDrawByRepetition(node);
+			return 
+				GameState::countMatches(node) + 
+				GameState::countMatches(history) >= 3;
+				//GameState::isDrawByRepetition(node) || 
+				//GameState::isDrawByRepetition(history);
 		};
 
 		calcGameState(
@@ -167,6 +178,8 @@ namespace forge
 		// Skip current Node 
 		nPtr = nPtr->parentPtr();
 
+		// --- Search Tree ---
+		// Iterate up the node tree to the root.
 		while (nPtr != nullptr) {
 			if (nPtr->position() == currPos) {
 				matches++;
@@ -181,5 +194,36 @@ namespace forge
 		}
 
 		return false;	// did not find 3 matches (No DRAW)
+	}
+
+	// TODO: Optimize: Only search every other node. This is because a match is dependent of the player making the move.
+	// !!! If searching every other node, then we need to skip the 1st 2 nodes instead of the 1st one only !!!
+	template<class NODE_T>
+	inline int16_t GameState::countMatches(const NodeTemplate<NODE_T> & node) {
+		const Position & currPos = node.position();
+
+		const NodeTemplate<NODE_T> * nPtr = &node;
+		uint16_t matches = 0;
+
+		// Skip current Node 
+		nPtr = nPtr->parentPtr();
+
+		// --- Search Tree ---
+		// Iterate up the node tree to the root.
+		while (nPtr != nullptr) {
+			if (nPtr->position() == currPos) {
+				matches++;
+
+				if (matches >= 3) {
+					break;
+					//return true;	// 3 matches found (DRAW by repetition)
+				}
+			}
+
+			// Jump to parent of this node.
+			nPtr = nPtr->parentPtr();
+		}
+
+		return matches;	// did not find 3 matches (No DRAW)
 	}
 } // namespace forge

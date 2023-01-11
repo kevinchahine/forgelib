@@ -10,6 +10,9 @@ namespace forge
 {
 	class game_history : public std::vector<MovePositionPair>
 	{
+	private:
+		using super_t = std::vector<MovePositionPair>;
+
 	public:
 		// Optimize:
 		// emplace_back() 
@@ -27,7 +30,11 @@ namespace forge
 
 			pos.move<pieces::Piece>(move);
 
-			this->emplace_back(move, pos);
+			static_cast<super_t *>(this)->emplace_back(move, pos);// call emplace_back of parent class
+		}
+
+		void push_back(const MovePositionPair & pair) {
+			static_cast<super_t *>(this)->push_back(pair);// call emplace_back of parent class
 		}
 
 		void save(const std::string& filename);

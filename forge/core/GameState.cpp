@@ -7,7 +7,7 @@ using namespace std;
 
 namespace forge
 {
-	void GameState::operator()(const game_history & history)
+	void GameState::init(const game_history & history)
 	{
 		// Calculate number of legal moves
 		MoveGenerator2 movegen;
@@ -128,6 +128,24 @@ namespace forge
 		return nMatches >= 3;
 	}
 
+	int16_t GameState::countMatches(const game_history & history) {
+		const MovePositionPair & curr = history.current();
+
+		game_history::const_iterator it = history.begin();
+		game_history::const_iterator end = history.end();
+
+		if (history.size()) {
+			--end;
+		}
+
+		// Try to find 3 positions that match currPos
+		auto nMatches = count(it, end, curr);
+
+		// 3 (or more) matches means draw by repetition.
+		// We should only ever find 3 or less.
+		return nMatches;
+	}
+
 	bool GameState::isInsufficientMaterial(const Board & board)
 	{
 		// Sufficient material:
@@ -179,6 +197,7 @@ namespace forge
 		bool blackHasLightSquaredBishop = false;
 		bool blackHasDarkSquaredBishop = false;
 
+		// TODO: Optimize: This can be done using bitwise operations. No need to locations of each piece.
 		for (int row = 0; row < 8; row++) {
 			for (int col = 0; col < 8; col++) {
 				BoardSquare square{ row, col };
@@ -247,7 +266,7 @@ namespace forge
 		// and there are no pawns on the board:
 		//	- Lone King vs Lone King:
 		//		- 0 vs 0	(draw)
-		//	- Long King vs King + 1 Minor:
+		//	- Lone King vs King + 1 Minor:
 		//		- 0 vs B	(draw)
 		//		- B vs 0	(draw)
 		//		- 0 vs N	(draw)
@@ -292,7 +311,7 @@ namespace forge
 			return SUFFICIENT;
 		}
 
-		return bool();	// placeholder
+		return bool();	// placeholder to avoid warnings
 	}
 
 } // namespace forge
