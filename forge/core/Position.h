@@ -28,13 +28,13 @@ namespace forge
 
 		// --- Constructors ---
 
-		Position() = default;
-		Position(const Position&) = default;
-		Position(Position&&) noexcept = default;
-		Position(const std::string& fen);
+		Position() { setupNewGame(); };
+		Position(const Position &) = default;
+		Position(Position &&) noexcept = default;
+		Position(const std::string & fen);
 		~Position() noexcept = default;
-		Position& operator=(const Position&) = default;
-		Position& operator=(Position&&) noexcept = default;
+		Position & operator=(const Position &) = default;
+		Position & operator=(Position &&) noexcept = default;
 
 		void reset();	// TODO: remove this and replaces all calls with setupNewGame()
 		void setupNewGame();
@@ -72,7 +72,7 @@ namespace forge
 		// TODO: Add capture() and push() versions of move() that will be more efficient
 
 		// --- NOTATIONS ---
-		void fromFEN(const std::string& fen);
+		void fromFEN(const std::string & fen);
 		std::string toFEN() const;
 
 		Board & board() { return m_board; }
@@ -80,8 +80,7 @@ namespace forge
 		const FiftyMoveRule & fiftyMoveRule() const { return m_fiftyMoveRule; }
 		const MoveCounter & moveCounter() const { return m_moveCounter; }
 
-		std::size_t hash() const noexcept 
-		{
+		std::size_t hash() const noexcept {
 			std::size_t seed = 0;
 
 			hash_combine(seed, this->board());
@@ -92,24 +91,22 @@ namespace forge
 		}
 
 		// Only compares board and current payers turn.
-		bool operator==(const Position & rhs) const
-		{
+		bool operator==(const Position & rhs) const {
 			return
 				//(m_moveCounter.isWhitesTurn() == rhs.m_moveCounter.isWhitesTurn()) &&
 				(m_board == rhs.m_board);
 		}
 		bool operator!=(const Position & rhs) const { return !(*this == rhs); }
 
-		bool operator<(const Position& rhs) const noexcept
-		{
-			return 
-				this->hash() < 
+		bool operator<(const Position & rhs) const noexcept {
+			return
+				this->hash() <
 				rhs.hash();
 		}
 
 		// Streams Position in FEN notation
-		friend std::ostream& operator<<(std::ostream& os, const Position& pos);
-		friend std::istream& operator>>(std::istream& is, Position& pos);
+		friend std::ostream & operator<<(std::ostream & os, const Position & pos);
+		friend std::istream & operator>>(std::istream & is, Position & pos);
 
 	protected:
 		Board m_board;
@@ -129,8 +126,7 @@ namespace std
 	template<> struct hash<forge::Position>
 	{
 	public:
-		std::size_t operator()(const forge::Position& pos) const noexcept
-		{
+		std::size_t operator()(const forge::Position & pos) const noexcept {
 			std::size_t seed = 0;
 
 			hash_combine(seed, pos.board());
