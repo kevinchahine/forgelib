@@ -5,6 +5,7 @@
 //#include "forge/heuristics/HeuristicBase.h"	// for heuristic_t
 
 #include <vector>
+#include <queue>
 #include <memory>
 #include <mutex>
 #include <limits>
@@ -82,6 +83,8 @@ namespace forge
 		std::vector<std::shared_ptr<NODE_T>>& children() { return m_childrenPtrs; }
 		const std::vector<std::shared_ptr<NODE_T>>& children() const { return m_childrenPtrs; }
 
+		void printTree(int depthLimit = 3, std::ostream & os = std::cout) const;
+
 	protected:
 
 		// Stores the move that got us to this position from parent
@@ -128,9 +131,9 @@ namespace forge
 		m_childrenPtrs.resize(moves.size());
 
 		for (size_t m = 0; m < moves.size(); ++m) {
-			const auto& move = moves.at(m);
-			auto& child = m_childrenPtrs.at(m);
-			
+			const auto & move = moves.at(m);
+			auto & child = m_childrenPtrs.at(m);
+
 			// -- Create new Node --
 			child = std::make_shared<NODE_T>();
 
@@ -142,18 +145,53 @@ namespace forge
 		// 3.) --- Assign sibling pointers ---
 		if (m_childrenPtrs.size()) {
 			for (size_t i = 0; i < m_childrenPtrs.size() - 1; i++) {
-				std::shared_ptr<NODE_T>& childPtr = m_childrenPtrs.at(i);
+				std::shared_ptr<NODE_T> & childPtr = m_childrenPtrs.at(i);
 
-				childPtr->m_parentPtr = static_cast<NODE_T*>(this);
+				childPtr->m_parentPtr = static_cast<NODE_T *>(this);
 			}
 		}
 
 		// 4.) --- Assign last childs m_nextPtr to parent ---
 		if (m_childrenPtrs.empty() == false) {
-			m_childrenPtrs.back()->m_parentPtr = static_cast<NODE_T*>(this);
+			m_childrenPtrs.back()->m_parentPtr = static_cast<NODE_T *>(this);
 		}
 
 		m_state = STATE::EXPANDED;
+	}
+
+	template<class NODE_T>
+	void NodeTemplate<NODE_T>::printTree(int depthLimit, std::ostream & os) const {
+		class NodeDepthPair
+		{
+		public :
+			const NodeTemplate<NODE_T> * node;
+			size_t depth;
+			std::string branches;
+		};
+
+		std::queue<NodeDepthPair> frontier;
+		
+		const NodeDepthPair obj{ this, 0, "+---" };
+		frontier.push(obj);
+
+		while (frontier.size()) {
+			const NodeDepthPair front = frontier.front();
+			frontier.pop();
+
+			for (const auto & s : front.branches) {
+				os << s;
+			}
+
+			os << front.node->position().toFEN();
+
+			std::string branch = front.branches + "+---";
+
+			for (const auto & child : front.node->children()) {
+				frontier.push(NodeDepthPair{child.get(), front.depth + 1, branch});
+			}
+
+			os << std::endl;
+		}
 	}
 } // namespace forge
 
