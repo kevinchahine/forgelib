@@ -23,7 +23,7 @@ namespace forge
 		BitBoard lineOfFire;
 
 		// Direction of the attacker from the Kings perspective.
-		// Can be a Ray or Knight direction
+		// Can be a Ray or Knight (L-Shaped) direction
 		directions::Direction dir;
 	};
 } // namespace forge

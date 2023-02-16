@@ -6,6 +6,12 @@ namespace forge
 {
 	namespace directions
 	{
+		// A class used to represent direction of movement.
+		// Each piece moves in a special direction. 
+		// 
+		// Can be used simply as a type in template parameters or a object stored in memory.
+		//
+		// 
 		class Direction {
 		public:
 			Direction() = default;
@@ -18,19 +24,23 @@ namespace forge
 			Direction & operator=(const Direction &) = default;
 			Direction & operator=(Direction &&) noexcept = default;
 
+			// Returns a BoardSquare moved `bs`
 			BoardSquare operator()(BoardSquare bs) {
 				return BoardSquare{ bs.row() + vertical, bs.col() + horizontal };
 			}
 
+			// Returns a BoardSquare when moved from `bs` according to this direction.
 			// TODO: Consider calling this moveFrom()
 			BoardSquare move(const BoardSquare & square) const {
 				return BoardSquare{ square.row() + vertical, square.col() + horizontal };
 			}
 
+			// Returns a BoardSquare when moved from `bs` in the opposite of this direction.
 			BoardSquare reverse(const BoardSquare & square) const {
 				return BoardSquare{ square.row() - vertical, square.col() - horizontal };
 			}
 
+			// Returns true iff moving from `square` in this direction would be in bounds.
 			bool wouldBeInBounds(const BoardSquare & square) const {
 				return
 					static_cast<int8_t>(square.row()) + vertical < 8 &&

@@ -4,6 +4,8 @@ namespace forge
 {
 	namespace colors
 	{
+		// Simple class to represent piece color.
+		// TODO: Do we even use this class
 		class Color
 		{
 		public:

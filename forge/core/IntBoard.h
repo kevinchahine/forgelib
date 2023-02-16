@@ -9,6 +9,8 @@
 
 namespace forge
 {
+	// An integer array representation of a chess board.
+	// Stores pieces as an 8x8 int array.
 	class IntBoard
 	{
 	public:

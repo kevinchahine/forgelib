@@ -39,7 +39,7 @@ namespace forge
 		void reset();	// TODO: remove this and replaces all calls with setupNewGame()
 		void setupNewGame();
 
-		// Removes allToFen pieces
+		// Removes all pieces
 		void clear();
 
 		bool isWhitesTurn() const { return m_moveCounter.isWhitesTurn(); }

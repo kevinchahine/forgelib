@@ -12,12 +12,14 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
-#include <assert.h>	// for assert() // TODO: dO WE STILL need this
+#include <assert.h>	// for assert() // TODO: Do we still need this
 
 namespace forge
 {
 	const BitBoard pawn_mask = 0x00FFFFFFFFFFFF00ULL;
 
+	// Stores the pieces on a chess board.
+	// Stores pieces using BitBoards.
 	class Board
 	{
 	public:
@@ -27,16 +29,21 @@ namespace forge
 		friend class AttackChecker;
 		friend struct std::hash<Board>;
 
-		// Removes allToFen pieces except Kings.
-		// Places Kings in there starting locations.
+		// Removes all pieces except Kings.
+		// Places Kings in their starting locations.
 		void reset();
 
+		// returns 8
 		constexpr size_t rows() const { return 8; }
+		// returns 8
 		constexpr size_t cols() const { return 8; }
 
+		// Print board and pieces as a colored checker board.
 		void print(std::ostream & os = std::cout) const;
+		// Print board and pieces as a small checker board.
 		void printMini(std::ostream & os = std::cout) const;
 
+		// Returns pieces as a guten::boards::CheckerBoard
 		guten::boards::CheckerBoard getCheckerBoard() const;
 		guten::core::Matrix getMiniBoard(
 			const termcolor::Color & lightPiece = guten::color::white,
@@ -44,28 +51,40 @@ namespace forge
 			const termcolor::Color & lightCell = guten::color::darkyellow,
 			const termcolor::Color & darkCell = guten::color::green) const;
 
+		// Returns piece at coordinate
 		pieces::Piece at(int row, int col) const;
+
+		// Returns piece at coordinate
 		pieces::Piece at(BoardSquare square) const;
 
+		// Replaces the piece at the coordinate with the one specified.
+		// Does not remove or replace Kings.
 		// If piece == empty, does not remove King.
 		// To move King, simply set the desired coordinates using this method.
 		// Optimization: Not intended to be used in performance critical code.
 		// Use methods that move pieces instead
 		void placePiece(uint8_t row, uint8_t col, pieces::Piece piece) { placePiece(BoardSquare((uint16_t)row, (uint16_t)col), piece); }
+		
+		// Replaces the piece at the coordinate with the one specified.
+		// Does not remove or replace Kings.
 		// If piece == empty, does not remove King.
 		// To move King, simply set the desired coordinates using this method.
 		// Optimization: Not intended to be used in performance critical code.
 		// Use methods that move pieces instead
 		void placePiece(BoardSquare square, pieces::Piece piece);
+		
+		// Replaces the pieces at the coordinates with the one specified.
+		// Does not remove or replace Kings.
 		// Places 0 or more pieces of the same type.
 		// Not an efficient method.
 		// Does not work on Kings.
 		// * See comments for void Board::placePiece(BoardSquare square, pieces::Piece piece)
 		void placePieces(BitBoard squares, pieces::Piece piece);
 
-		// Places allToFen pieces as they would go at the start of a normal chess game.
+		// Places all pieces as they would go at the start of a normal chess game.
 		void placeAllPieces();
 
+		// Places a piece at `square`
 		template <typename PIECE_T>	void place(BoardSquare square, bool isWhite = true);
 		/////////////template<> void place<pieces::Empty>(BoardSquare square, bool isWhite);
 		/////////////template<> void place<pieces::King>(BoardSquare square, bool isWhite);
@@ -79,6 +98,7 @@ namespace forge
 		/////////////template<> void place<pieces::WhitePawn>(BoardSquare square, bool isWhite);
 		/////////////template<> void place<pieces::BlackPawn>(BoardSquare square, bool isWhite);
 
+		// Moves a piece according to `move`
 		// Works for both push moves and captures
 		template <typename PIECE_T> void move(Move move);
 		//////////////template<> void move<pieces::King>(Move move);
@@ -94,9 +114,10 @@ namespace forge
 		//////////////template<> void move<pieces::Pawn>(Move move);
 		//////////////template<> void move<pieces::Piece>(Move move);
 
-		// Rotates the Board 180 degrees. 
+		// Returns the Board rotated at 180 degrees. 
 		// Same as rotating pieces but without rotating the chess board.
-		// Does flip piece colors (white->black, black->white)
+		// This also flips piece colors (white->black, black->white).
+		// Used for evaluation functions.
 		Board rotated() const;
 
 		// ---------------------------- Boolean Methods -----------------------
@@ -169,6 +190,7 @@ namespace forge
 		//	return BitBoard();
 		//}
 		
+		// Returns a BitBoard of all pieces that can move in the specified direction
 		template<typename DIRECTION_T> BitBoard directionals() const;
 		
 		bool operator==(const Board & rhs) const {
@@ -189,14 +211,14 @@ namespace forge
 		BitBoard m_blacks{ uint64_t(1) << 4 };	// All Black Pieces (Including Kings and Knights)
 		BitBoard m_bishops;				// Bishops and Queens
 		BitBoard m_rooks;				// Rooks and Queens
-		// Ranks 1 and 8 have special meaning. Pawn at rank 1 means that
-		// corresponding white pawn on rank 4 can be taken en passant. Rank 8 is the
-		// same for black pawns. Those "fake" pawns are not present in our_pieces_ and
-		// their_pieces_ bitboards.
-		BitBoard m_pawns;			// Pawns (Ranks 1 and 8 represent which pawns have just moved 2 squares)
+		// Ranks 1 and 8 have special meaning. Pawn at rank 1 (Bottom Row) means that
+		// corresponding white pawn on rank 4 can be taken en passant. Rank 8 (Top Row is the
+		// same for black pawns. Those "fake" pawns are not present in our_pieces() and
+		// their_pieces() bitboards.
+		BitBoard m_pawns;			// Pawns (Bits for Ranks 1 and 8 represent which pawns have just moved 2 squares)
 
-		BoardSquare m_whiteKing{ 60 };
-		BoardSquare m_blackKing{ 4 };
+		BoardSquare m_whiteKing{ 60 };// Coordinates of White King
+		BoardSquare m_blackKing{ 4 };// Coordinates of Black King
 
 		// TODO: Still need castiling
 	}; // class Board

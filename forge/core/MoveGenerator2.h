@@ -12,6 +12,8 @@
 
 namespace forge
 {
+	// Generates a list of legal moves at the given position. 
+	// TODO: Consider making this a stand alone function. Might be faster in runtime. 
 	class MoveGenerator2
 	{
 	private:
@@ -25,12 +27,14 @@ namespace forge
 
 	public:
 
+		// Generates all legal moves from the given position and returns them in a MoveList.
 		MoveList & generate(const Position & pos);
+
 
 		const BitBoard & getThreats() const { return threats; }
 
 	private:
-	public:	// <-- Only for testing
+	public:	// <-- TODO: Only for testing. Change back to private.
 
 		// Searches for Pins and generates legal moves for those pieces but
 		// only if 'searchOnly' is set to false.
@@ -55,7 +59,7 @@ namespace forge
 		//	See namespace forge::directions.
 		// theirRays - Squares containing their ray pieces that can attack in direction of RAY_DIRECTION_T.
 		//		ex: Rooks and Queens can attack Up, Down, Left and Right
-		// ourBlockers - Squares of allToFen our pieces that can block our King. In otherwords, allToFen our pieces
+		// ourBlockers - Squares of all our pieces that can block our King. In otherwords, all our pieces
 		//		except our King.
 		template<typename DIRECTION_T>
 		bool isPinPossible() const;
@@ -115,7 +119,7 @@ namespace forge
 		void genFreeQueenMoves(BoardSquare queen);
 
 	private:
-		// The squares occupied by pieces of both colors
+		// The squares occupied by pieces of either color
 		BitBoard occupied;
 		// The squares that are empty
 		BitBoard empty;
@@ -146,7 +150,7 @@ namespace forge
 		BitBoard theirLaterals;
 
 		// The squares that their pieces are attacking.
-		// Our King cannot move to any of these square.
+		// ** Our King cannot move to any of these square. **
 		BitBoard threats;
 
 		// Our non-King pieces
@@ -154,11 +158,12 @@ namespace forge
 		// Their non-King pieces
 		BitBoard theirBlockers;
 
-		// The squares of our pinned pieces that are pinned to our King
+		// The squares of our pieces that are pinned to our King (absolute pins)
 		// This BitBoard will be set from genPinMoves()
 		// After calling genPinMoves(), the moves of these pieces will have been added to the MoveList
 		BitBoard ourAbsolutePins;
 
+		// TODO: Why not make this a Position? to save on dereferencing.
 		const Position * currPositionPtr = nullptr;
 		
 		// List of legal moves

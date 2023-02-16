@@ -36,7 +36,7 @@ namespace forge
 
 			// 4.) --- Overlap masks with battleGround and their pieces ---
 			pushMask &= battleGround & (~theirs);		// Should contain 1s where pinned can push to between King and pinner
-			captureMask &= battleGround & (theirs);		// Should contain a 1 on pinner or allToFen zeros
+			captureMask &= battleGround & (theirs);		// Should contain a 1 on pinner or all zeros
 
 			// 5.) --- Actually generate some moves already ---
 			// --- Look ahead: Are any push moves possible? ---
@@ -118,7 +118,10 @@ namespace forge
 			"DIRECTION_T must be a Linear direction.");
 
 		// What squares would an opponent ray pieces have to be 
-		// standing on if a pin was to be possible.
+		// standing on if a pin was to be possible?
+		// ex:
+		//	If DIRECTION_T is Up, then extends marks all the squares above the King.
+		//	If DIRECTION_T is Diagonal, then extends marks all the squares diagonal from the King.
 		BitBoard extents = BitBoard::mask<DIRECTION_T>(ourKing);
 
 		// For a pin to be possible (but non necessarily definite):
@@ -126,12 +129,12 @@ namespace forge
 		//	- atleast one of our blockers needs to be somewhere on extents also.
 		// Hints for optimizations: 
 		//	- if DIRECTION_T is a multi directional direction, (ex: Diagonal, Lateral), 
-		//		it is better to set ourBlockers to allToFen ones so that only theirRays are account. 
+		//		it is better to set ourBlockers to all ones so that only theirRays are account. 
 		//		Our blockers might be in one direction (ex: Right) from the King while
 		//		one of their theirRays might be in another direction (ex: Up).
 		//		In this case a pin is not possible.
-		//		Because of this it is better to set ourBlockers to allToFen ones
-		//	- if DIRECTION_T is a ray direction, then its best to have ourBlockers be allToFen
+		//		Because of this it is better to set ourBlockers to all ones
+		//	- if DIRECTION_T is a ray direction, then its best to have ourBlockers be all
 		//		our non-King pieces as it is less common for our pieces to be on the same 
 		//		ray as their ray pieces. When they are, a pin is possible.
 

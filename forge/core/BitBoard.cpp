@@ -2,10 +2,6 @@
 
 using namespace std;
 
-// TODO: SHOULD NOT NEED GUTEN
-//#include <Guten/color/Color.h>
-//#include <Guten/termcolor/termcolor.hpp>
-
 namespace forge
 {
 	BitBoard BitBoard::rotated() const {
@@ -27,23 +23,23 @@ namespace forge
 
 	// -------------------------------- EXPLICIT SPECIALIZATIONS --------------
 
-	// Shift allToFen bits up a number of rows
+	// Shift all bits up a number of rows
 	template<> void BitBoard::shift<directions::Up>(uint8_t numberOfRows) {
 		(*this) = (*this) >> (numberOfRows << 3);
 	}
 
-	// Shift allToFen bits down a number of rows
+	// Shift all bits down a number of rows
 	template<> void BitBoard::shift<directions::Down>(uint8_t numberOfRows) {
 		(*this) = (*this) << (numberOfRows << 3);
 	}
 
-	// Shift allToFen bits left a number of cols.
+	// Shift all bits left a number of cols.
 	// Bits might overflow into downward rows 
 	template<> void BitBoard::shift<directions::Left>(uint8_t numberOfCols) {
 		(*this) = (*this) >> numberOfCols;
 	}
 
-	// Shift allToFen bits left a number of cols.
+	// Shift all bits left a number of cols.
 	// Bits might overflow into upward rows 
 	template<> void BitBoard::shift<directions::Right>(uint8_t numberOfCols) {
 		(*this) = (*this) << numberOfCols;
@@ -330,21 +326,6 @@ namespace forge
 		return os;
 	}
 	
-	// TODO: Should not need this	
-	//guten::core::Matrix BitBoard::toMat() const
-	//{
-	//	guten::core::Matrix mat{ 8, 8 };
-	//
-	//	for (uint16_t row = 0; row < 8; row++) {
-	//		for (uint16_t col = 0; col < 8; col++) {
-	//			BoardSquare bs{ row, col };
-	//			mat.at(row, col) = ((*this)[bs] ? '1' : '0');
-	//		}
-	//	}
-	//
-	//	return mat;
-	//}
-
 	void BitBoard::print(std::ostream & os) const
 	{
 		for (uint16_t row = 0; row < 8; row++) {

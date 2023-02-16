@@ -8,6 +8,7 @@
 
 namespace forge
 {
+	// Stores a sequence of moves and their cooresponding Positions.
 	class game_history : public std::vector<MovePositionPair>
 	{
 	private:
@@ -22,7 +23,7 @@ namespace forge
 		MovePositionPair& current() { return this->back(); }
 		
 		// Applies move and appends to game history.
-		// Only works if there is atleast 1 MovePositionPair in the game_history
+		// Warning: Only works if there is atleast 1 MovePositionPair in the game_history
 		void push_back(const Move& move) {
 			const MovePositionPair& curr = this->current();
 
@@ -33,11 +34,15 @@ namespace forge
 			static_cast<super_t *>(this)->emplace_back(move, pos);// call emplace_back of parent class
 		}
 
+		// Push the latest move and position. These then become the current move/position.
 		void push_back(const MovePositionPair & pair) {
 			static_cast<super_t *>(this)->push_back(pair);// call emplace_back of parent class
 		}
 
+		// Save to a file
 		void save(const std::string& filename);
+
+		// Load from a file
 		void load(const std::string& filename);
 
 		friend std::ostream& operator<<(std::ostream& os, const game_history& history) {

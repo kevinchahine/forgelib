@@ -56,6 +56,14 @@ namespace forge
 
 		preprocess(pos);
 
+		// All legal moves can be broken down into 3 sets:
+		//	- legal moves when King is not attacked
+		//	- legal moves when King is attacked by 1 piece 
+		//	- legal moves when King is attacked by 2 pieces
+		// 
+		// Each cenario must be determined to minimize the amount of work needed
+		// to generate legal moves.
+		
 		// Who if any are attacking our King?
 		KingAttackers attackers = KingAttackers::findKingAttackers(pos.board(), ourKing, theirs, ours);
 
@@ -75,7 +83,7 @@ namespace forge
 		}
 
 		if (attackers.size() == 1) {
-			// 1 enemey is attacking our King
+			// 1 enemy is attacking our King
 			// All we can do is:
 			//	- See attackers.size() <= 2
 			//	- Non-King blocks attacker ***
@@ -85,7 +93,8 @@ namespace forge
 			// TODO: Find all pinned pieces here
 			genPinMoves(pos.board(), pos.moveCounter().isWhitesTurn(), true);
 
-			// Must evaluate pinned peices before calling this method
+			// Find all the moves which can block or capture the attacker.
+			// Warning: Must evaluate pinned peices before calling this method
 			genBlockAndCaptureMoves(attackers[0]);
 		}
 
@@ -718,8 +727,8 @@ namespace forge
 	// Iterates from 'ray' to edge of board or until an obstacle is hit.
 	// Generates capture and push moves
 	// 'ray' - Coordinate of ray piece of which moves are to be generated
-	// 'obstacles - BitBoard of allToFen pieces
-	// 'theirs' - BitBoard of allToFen pieces of opposite color to piece at 'ray'
+	// 'obstacles - BitBoard of all pieces
+	// 'theirs' - BitBoard of all pieces of opposite color to piece at 'ray'
 	// 'legals' - MoveList of legal moves
 	// 'pos' - Current position
 	template<typename RAY_DIRECTION_T, typename PIECE_T>

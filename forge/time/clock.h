@@ -48,7 +48,7 @@ namespace forge
 
 		void resume();
 
-		// Sets allToFen time controls and move count to zero.
+		// Sets all time controls and move count to zero.
 		// Sets state to stop. Good to call synchronize after resetAll().
 		void resetAll();
 

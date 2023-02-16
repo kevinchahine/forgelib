@@ -4,7 +4,10 @@
 
 namespace forge
 {
-	// Keeps track of 50 move rule.
+	// Keeps track of 50 move rule by counting the number of half moves since the 
+	// last time a:
+	//	- pawn moved
+	//	- a piece was captured
 	class FiftyMoveRule
 	{
 	public:
@@ -12,6 +15,7 @@ namespace forge
 
 	public:
 		// Call at start of game.
+		// Sets count to 0
 		void reset() {	halfMoveCount = 0; }	// was = -1; }
 
 		// Call when a pawn has moved
@@ -20,12 +24,14 @@ namespace forge
 		//	- captures
 		//	- en passent
 		//	- and promotions
+		// Remember to call update() once before the end of this turn.
 		void pawnHasMoved() { reset(); }
 
 		// Call when any piece has been captured.
 		// Remember to call update() once before the end of this turn.
 		void pieceCaptured() { reset(); }
 		
+		// Increments counter.
 		// Call this method whenever a move is made, even after calling
 		// pawnHasMoved() or pieceCaptured().
 		// Call this method exactly once every turn.
@@ -33,8 +39,8 @@ namespace forge
 
 		// Returns true iff no:
 		//	- pawn moves or
-		//	- captures
-		// have been made in 50 full moves (100 half moves)
+		//	- captures have been made
+		// in 50 full moves (100 half moves)
 		bool isDraw() const { return halfMoveCount >= 100; }
 
 		int count() const { return halfMoveCount; }
@@ -49,6 +55,7 @@ namespace forge
 	};
 } // namespace forge
 
+// --- Inject hash into std namespace ---
 namespace std
 {
 	template<> struct hash<forge::FiftyMoveRule>

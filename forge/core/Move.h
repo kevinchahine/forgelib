@@ -11,6 +11,11 @@ namespace forge
 	const std::bitset<16> to_mask =		   0b0000'111111'000000;
 	const std::bitset<16> promotion_mask = 0b1111'000000'000000;
 
+	// Represents a chess move
+	// Stores:
+	//	coordinates where piece is moving from
+	//	coordinates where piece is moving to
+	//	promotion piece (if applicable)
 	class Move
 	{
 	public:
@@ -31,6 +36,7 @@ namespace forge
 		bool operator==(const Move & rhs) const { return m_val == rhs.m_val; }
 		bool operator!=(const Move & rhs) const { return !(*this == rhs); }
 
+		// Returns coordinates of where piece is moving from
 		BoardSquare from() const 
 		{
 			uint16_t v = (uint16_t) (m_val & from_mask).to_ulong();
@@ -38,6 +44,7 @@ namespace forge
 			return BoardSquare((uint8_t) v);
 		}
 		
+		// Sets coordinates of where piece is moving from
 		void from(BoardSquare pos) 
 		{
 			std::bitset<16> posBits = pos.val() /*<< 0*/;
@@ -45,7 +52,8 @@ namespace forge
 			m_val = (m_val & ~from_mask) | posBits;
 		}
 		
-		// Sets to component using file and rank as characters
+		// Sets coordinates of where piece is moving from
+		// using file and rank as characters
 		// Make sure file is lower case
 		// file = { 'a' - 'h' }
 		// rank = { '1' - '8' }
@@ -53,6 +61,7 @@ namespace forge
 		// !!! Only use characters not integers
 		void from(char file, char rank);
 
+		// Returns coordinates of where piece is moving to
 		BoardSquare to() const 
 		{
 			uint16_t v = (uint16_t) (m_val & to_mask).to_ulong() >> 6;
@@ -60,14 +69,16 @@ namespace forge
 			return BoardSquare((uint8_t) v);
 		}
 		
-		void to(BoardSquare pos) 
+		// Sets coordinates of where piece is moving to
+		void to(BoardSquare pos)
 		{
 			std::bitset<16> posBits = pos.val() << 6;
 
 			m_val = (m_val & ~to_mask) | posBits;
 		}
 
-		// Sets to component using file and rank as characters
+		// Sets coordinates of where piece is moving to
+		// using file and rank as characters
 		// Make sure file is lower case
 		// file = { 'a' - 'h' }
 		// rank = { '1' - '8' }
@@ -75,6 +86,7 @@ namespace forge
 		// !!! Only use characters not integers
 		void to(char file, char rank);
 		
+		// Returns promotion piece (could return pieces::Empty if move is not a promotion)
 		pieces::Piece promotion() const 
 		{
 			uint16_t v = (uint16_t) (m_val & promotion_mask).to_ulong() >> 12;
@@ -82,6 +94,7 @@ namespace forge
 			return pieces::Piece((uint8_t) v);
 		}
 		
+		// Set promotion piece
 		// Make sure piece is of the correct color
 		// and is any of:
 		//	- Queen
@@ -99,52 +112,66 @@ namespace forge
 			m_val = (m_val & ~promotion_mask) | promotionBits;
 		}
 
-		// Sets promotion component to one cooresponding to 
+		// Sets promotion piece to one cooresponding to 
 		// 'promotionCh'. 
 		// Move will be set to invalid if 'promotionCh' does not
 		// coorespond to a QRBN piece or if 'to' component doesn't
 		// point to a promotional rank.
 		// Color of promotion is determined automatically based on 'to'
 		// component
+		// 
+		// Make sure to call this method only after the 'to' component has be set to a promotion rank.
 		void promotion(char promotionCh);
 
 		// Determines if the Move object refers to only part of a move
 		// where either the 'from' or 'to' component is specified
-		// Useful with user interfaces where the user wants to specify their move in 
+		// Useful with user interfaces where the user wants to specify their move 
 		// in 2 steps: One for the coordinate of the piece their moving (from) and
 		// the second for the coordinate their moving to (to).
-		// ex: User is prompted to make a move.
-		// User selects 'e4'
-		// Display highlights 'e4' square and allToFen the legal moves for that piece
-		// User selects 'e5'
-		// Game applies the move 'e4e5'
-		// When isPartial() returns true, to() and from() will be equal.
+		// 
+		// ex: 
+		// 1.) User is prompted to make a move.
+		// 2.) User selects 'e4'
+		// 3.) Display highlights 'e4' square and all the legal moves for that piece
+		// 4.) User selects 'e5'
+		// 5.) Game applies the move 'e4e5'
+		// 
+		// Partial moves are determined by setting 'to' and 'from' components to the same BoardSquare
 		bool isPartial() const { return to() == from(); }
+
+		// Returns true if promotion component has been set to a piece other than empty.
 		bool isPromotion() const { return promotion() != pieces::empty; }
 
-		// Used to determine if a specifed move has been set to invalid.
-		// Does not consider most cases of valid or invalid moves.
-		// A Move object must be set to invalid by calling .setInvalid() 
-		//	usually when user enters and invalid move.
+		// Determines if this move has been set to invalid.
+		// 
+		// A Move object must be set to invalid by calling .setInvalid()
+		// 
+		// Warning: It is possible to store an 'invalid' or 'impossible' 
+		// Move which can never occur in a game.
+		// But this method is only intended to work when the object has been set to invalid 
+		// by calling .setInvalid()
 		bool isInvalid() const { return promotion().isPawn(); }
+
+		// Determines if this move is valid.
 		bool isValid() const { return !isInvalid(); }
 
 		// Used to identify a move as invalid by setting promotion component to a pawn.
-		// When changing an Move set to invalid, be sure to set the promotion component
+		// When setting back to a valid move, be sure to set the promotion component
 		// as well.
 		void setInvalid() { promotion(pieces::whitePawn); }
 
 		//std::string toPGN(const Board & board) const;
 
-		// Returns Move as a string represented in 'Long Algebreic Notation'
+		// Returns Move as a string represented in 'Long Algebreic Notation' (LAN)
 		// ex: 'e4e5'		piece at e4 will move up to e5
 		// ex: 'e7e8Q'		pawn at e7 will be promoted to Q on e8 (PAWN move only)
 		// ex: 'e7d8Q'		pawn at e7 will be promoted to Q and capture piece on d8 (PAWN capture only)
 		std::string toLAN() const;
 
+		// Calculates a hash for this move
 		size_t hash() const;
 
-		// prints move in long algebraic notation
+		// prints move in Long Algebraic Notation (LAN)
 		// To print using PGN notation use the .toPGN() method instead
 		friend std::ostream & operator<<(std::ostream & os, const Move & move);
 
@@ -157,6 +184,7 @@ namespace forge
 		//		e4e5	# to and from are both specified
 		//		a7a8q	# pawn promotes to a Queen on a8
 		//		e4 e5	# Bad, will only extract 'e4' from stream as a partial move.
+		// 
 		// WARNING: Does not support PGN because PGN requires a Board to remove ambiguities
 		friend std::istream & operator>>(std::istream & is, Move & move);
 

@@ -39,7 +39,7 @@ namespace forge
 	{
 		BitBoard threats;
 
-		// obstacles is made up of allToFen pieces (including their king) excluding our king
+		// obstacles is made up of all pieces (including their king) excluding our king
 		BitBoard obstacles = board.occupied() & ~(board.kings() & ~attackers);
 
 		for (uint8_t row = 0; row < 8; row++) {

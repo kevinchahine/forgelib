@@ -13,7 +13,9 @@
 namespace forge
 {
 	// Purpose: Represents a game state and calculates the game state of a Position.
-	//	To calculate the game state of a Position, the Position history is needed.
+	//	To calculate the game state of a Position, the GameHistory is needed. 
+	//  * See game_history.h
+	// 
 	// Game States:
 	//	- continue
 	//		- whites turn
@@ -32,18 +34,24 @@ namespace forge
 	//		- by timeout (with insufficient material)
 	//		- by 50 move rule
 	//		- by insufficient material (even with time on the clock)
+	// 
 	// *** Draws by insufficient material follow USCF rules
 	class GameState
 	{
 	public:
+		// Clears GameState
 		void reset() { (*this) = GameState(); }
 
-		// TODO: Optimize: make an overload of init() which accepts the number of legal moves at that node to save on running movegen.
+		// TODO: Optimize: make an overload of init() which accepts the number of 
+		// legal moves at that node to save on running movegen.
 		
-		// Calculates and sets game state
+		// Determines game state
 		template<class NODE_T>
 		void init(const NodeTemplate<NODE_T>& node, const game_history & history = game_history());
+		
+		// Determines game state
 		void init(const game_history& history);
+		
 		//void init(const ChessMatch & match);	// TODO:
 
 		bool isGameOver() const { return state != STATE::CONTINUE; }
@@ -52,6 +60,11 @@ namespace forge
 		bool blackWins() const { return state == STATE::WIN && player == PLAYER::BLACK; }
 		bool isDraw() const { return state == STATE::DRAW; }
 
+		// Returns:
+		//	+1 if white wins
+		//	-1 if black wins
+		//	0  if draw
+		// Undefined if gamestate is not terminal (win/loss/draw)
 		int getValue(bool maximizeWhite) const {
 			if (whiteWins()) return (maximizeWhite ? 1 : -1);
 			if (blackWins()) return (maximizeWhite ? -1 : 1);
@@ -98,7 +111,7 @@ namespace forge
 		//	- nLegalMoves - Number of legal moves at currPos
 		//	- currPos - current position game
 		//	- drawByRepetition - function that calculates a draw by repetition.
-		//		Function will need to contain in some way allToFen the moves or positions
+		//		Function will need to contain in some way all the moves or positions
 		//		that lead to currPos, and return true if currPos has been found in 
 		//		game history atleast 3 times (actually 2 times not counting 'currPos'
 		//		itself.

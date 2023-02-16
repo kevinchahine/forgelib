@@ -5,6 +5,7 @@
 
 namespace forge
 {
+	// A hashing function used to hash multiple fields together.
     template<typename T>
     void hash_combine(size_t& seed, const T& obj) {
         size_t k = std::hash<T>{}(obj);

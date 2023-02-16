@@ -5,6 +5,9 @@
 
 namespace forge
 {
+	// Stores a list of Pieces that are attacking the King. 
+	// *See class KingAttacker
+	// 
 	// TODO: Optimize: turns out static_vector implements std::vector meaning it stores
 	//	its data in a dynamically allocated array. Slower than what we want.
 	//	This class should be implemented more like a statically allocated array or 

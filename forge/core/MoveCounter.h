@@ -5,12 +5,12 @@
 
 namespace forge
 {
-	// Number of moves played
-	// 0 - no pieces have moved yet. (Whites thinking)
-	// 1 - white made its first move. (Blacks thinking)
-	// 2 - black made its first move. (Whites thinking)
-	// even numbers - (whites turn, whites thinking)
-	// odd numbers - (blacks turn, blacks thinking)
+	// Counts number of half-moves played
+	// 0 - no pieces have moved yet. (White's thinking)
+	// 1 - white made its first move. (Black's thinking)
+	// 2 - black made its first move. (White's thinking)
+	// even numbers - (white's turn, white's thinking)
+	// odd numbers - (black's turn, black's thinking)
 	class MoveCounter
 	{
 	public:
